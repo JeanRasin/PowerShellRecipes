@@ -2,10 +2,14 @@
 param (
   [Parameter()]
   [string]
-  $CommitFile
+  $CommitFile,
+  
+  [Parameter()]
+  [string]
+  $ProjectName
 )
 
-# Конвертер кодировок.
+# Converter encodings.
 function ConvertTo-Encoding ([string]$From, [string]$To) {
   Begin {
     $encFrom = [System.Text.Encoding]::GetEncoding($from)
@@ -19,7 +23,6 @@ function ConvertTo-Encoding ([string]$From, [string]$To) {
 }
 
 $CommitMessage = Get-Content -Path $CommitFile
-$ProjectName = "TRACKERX"
 
 $CommitMessage = $CommitMessage | ConvertTo-Encoding "UTF-8" "windows-1251"
 Write-Host $CommitMessage
@@ -33,7 +36,7 @@ if ($CommitMessage -match '\S.') {
   if ($HasMatch) {
     
     $IssueNumber = $Matches[2]
-    $CommitMessage = $ProjectName + '-' + $IssueNumber + ' - ' + $CommitMessage
+    $CommitMessage = $ProjectName + '-' + $IssueNumber + ' ' + $CommitMessage
 
     $CommitMessage = $CommitMessage  | ConvertTo-Encoding "windows-1251" "UTF-8"
     Set-Content -Path $CommitFile -Value $CommitMessage
